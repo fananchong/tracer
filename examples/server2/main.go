@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"math/rand"
 	"net"
 
+	"github.com/fananchong/tracer"
 	"github.com/fananchong/tracer/examples/proto"
 	"google.golang.org/grpc"
 )
@@ -30,15 +30,24 @@ func (s *server) BidirectionalStreamingEcho(proto.Echo_BidirectionalStreamingEch
 	return
 }
 
+const tracerName = "test"
+
 func main() {
+
+	// Init tracer
+	if err := tracer.Enable(tracerName); err != nil {
+		panic(err)
+	}
+
+	// Init gRPC
 	lis, err := net.Listen("tcp", fmt.Sprintf(":8888"))
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		panic(fmt.Errorf("failed to listen: %v", err))
 	}
 	fmt.Printf("server listening at %v\n", lis.Addr())
-
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		tracer.RPCServerOption(tracerName), // server tracer
+	)
 	proto.RegisterEchoServer(s, &server{})
-
 	s.Serve(lis)
 }

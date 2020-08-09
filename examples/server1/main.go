@@ -7,11 +7,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"runtime/debug"
 	"time"
 
 	"github.com/fananchong/tracer"
 	"github.com/fananchong/tracer/examples/proto"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"google.golang.org/grpc"
 )
 
@@ -38,6 +40,7 @@ func main() {
 	e := echo.New()
 
 	// Use Middleware
+	e.Use(middleware.Logger())
 	e.Use(tracer.EchoMiddleware(tracerName))
 
 	// Routes
@@ -49,7 +52,7 @@ func main() {
 }
 
 func test1(c echo.Context) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(c.Request().Context(), 10*time.Second)
 	defer cancel()
 	res, err := echoClient.UnaryEcho(ctx, &proto.EchoRequest{Message: "hello, xxxx"})
 	fmt.Printf("UnaryEcho call returned %q, %v\n", res.GetMessage(), err)
@@ -62,19 +65,19 @@ func test1(c echo.Context) error {
 func error1(c echo.Context) (err error) {
 	defer func() {
 		if x := recover(); x != nil {
-			switch x.(type) {
-			case error:
-				err = x.(error)
-			default:
-				err = fmt.Errorf("%v", x)
-			}
+			err = fmt.Errorf("%v\n%s", x, string(debug.Stack()))
 		}
 	}()
 	panic("test panic!!!!!!! test test test")
 }
 
 func newEchoClient(addr string) (conn *grpc.ClientConn, client proto.EchoClient, err error) {
-	if conn, err = grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock()); err == nil {
+	conn, err = grpc.Dial(addr,
+		grpc.WithInsecure(),
+		grpc.WithBlock(),
+		tracer.RPCClientOption(tracerName), // client tracer
+	)
+	if err == nil {
 		client = proto.NewEchoClient(conn)
 	} else {
 		log.Fatalf("did not connect: %v", err)
