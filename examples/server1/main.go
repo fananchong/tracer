@@ -23,7 +23,7 @@ const tracerName = "test"
 func main() {
 
 	// Init tracer
-	if err = tracer.EnableTracer(tracerName); err != nil {
+	if err = tracer.Enable(tracerName); err != nil {
 		panic(err)
 	}
 

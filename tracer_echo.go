@@ -21,7 +21,7 @@ type mwOptions struct {
 func EchoMiddleware(tracerName string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
-			if tracer := GetTracer(tracerName); tracer != nil {
+			if tracer := Get(tracerName); tracer != nil {
 				return withTracer(tracerName, tracer, next, c)
 			}
 			return next(c)

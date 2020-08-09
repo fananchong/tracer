@@ -2,7 +2,10 @@
 
 使用 opentracing ，封装常见的 golang 库，做全链路追踪
 
+## 主要特点
 
+- 可以开启或关闭 opentracing
+- 详细的例子，演练模拟各种异常下链路追踪情况
 
 ## 例子
 
@@ -26,6 +29,10 @@
 
 
 ## jaeger
+
+jaeger 安装，参考： [https://www.jaegertracing.io/docs/1.18/getting-started/](https://www.jaegertracing.io/docs/1.18/getting-started/)
+
+类似以下命令：
 
 ```vim
 docker run -d --name jaeger \

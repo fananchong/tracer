@@ -1,63 +1,40 @@
 package tracer
 
 import (
-	"fmt"
-	"io"
-	"sync"
-
+	"github.com/fananchong/tracer/internal/jaeger"
 	"github.com/opentracing/opentracing-go"
-	"github.com/uber/jaeger-client-go/config"
 )
 
-type tracerWrap struct {
-	tracer opentracing.Tracer
-	closer io.Closer
-	vaild  bool
+// ITracer tracer 访问接口
+type ITracer interface {
+	Enable(name string) (err error)
+	Disable(name string)
+	Get(name string) opentracing.Tracer
 }
 
-var tracers sync.Map
-
-// EnableTracer 打开 tracer
-func EnableTracer(name string) (err error) {
-	// 如果 tracer 已经存在，则激活，并返回
-	if x, ok := tracers.Load(name); ok {
-		if t := x.(*tracerWrap); !t.vaild {
-			tracers.Store(name, &tracerWrap{t.tracer, t.closer, true})
-		}
-		return
-	}
-	// 如果 tracer 不存在，则创建，并返回
-	cfg, err := config.FromEnv()
-	cfg.ServiceName = name
-	cfg.Sampler.Type = "const"
-	cfg.Sampler.Param = 1
-	if err != nil {
-		fmt.Printf("cannot parse jaeger env vars: %s\n", err.Error())
-		return
-	}
-	tracer, closer, err := cfg.NewTracer()
-	if err != nil {
-		fmt.Printf("cannot initialize jaeger tracer: %s\n", err.Error())
-		return
-	}
-	tracers.Store(name, &tracerWrap{tracer, closer, true})
-	return
+// Enable 打开 tracer
+func Enable(name string) (err error) {
+	return DefaultTracer.Enable(name)
 }
 
-// DisableTracer 关闭 tracer
-func DisableTracer(name string) {
-	if x, ok := tracers.Load(name); ok {
-		t := x.(*tracerWrap)
-		tracers.Store(name, &tracerWrap{t.tracer, t.closer, false})
-	}
+// Disable 关闭 tracer
+func Disable(name string) {
+	DefaultTracer.Disable(name)
 }
 
-// GetTracer 获取 tracer
-func GetTracer(name string) opentracing.Tracer {
-	if x, ok := tracers.Load(name); ok {
-		if t := x.(*tracerWrap); t.vaild {
-			return t.tracer
-		}
-	}
-	return nil
+// Get 获取 tracer
+func Get(name string) opentracing.Tracer {
+	return DefaultTracer.Get(name)
+}
+
+// DefaultTracer tracer 具体实例
+var DefaultTracer ITracer
+
+// Usejaeger 使用 jaeger 做为 tracer
+func Usejaeger() {
+	DefaultTracer = jaeger.New()
+}
+
+func init() {
+	Usejaeger()
 }
