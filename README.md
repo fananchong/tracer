@@ -5,11 +5,11 @@
 ## 主要特点
 
 - 可以开启或关闭 opentracing
-- 详细的例子，演练模拟各种异常下链路追踪情况
+- 详细的例子，演练模拟各种正常、异常下链路追踪情况
 
 ## 例子
 
-模拟以下场景，做下全链路追踪练习
+模拟以下情景，做下全链路追踪练习
 
 ```
       +--------------------------------+
@@ -31,8 +31,64 @@
                                        +-------------------------------------------+
 ```
 
+演练以下情景：
+- 正常情况
+  ```
+  server1 --> HTTP --> server2
+                          |--> HTTP --> server1
+                          |-->  gRPC --> server3
+                                            |--> MySQL
+                                            |--> Redis
+                                            |--> gRPC --> server2
+  ```
+  - 包括 HTTP 嵌套调用正常
+  - 包括 gRPC 嵌套调用正常
 
-## jaeger
+- 各种异常
+  - HTTP 执行 panic
+  - gRPC 执行 panic
+  - MySQL 执行失败
+  - Redis 执行失败
+  - 服务间调用死循环
+
+
+## HTTP
+
+目前 HTTP 使用 [github.com/labstack/echo](github.com/labstack/echo)
+
+接入 tracer 代码：
+
+```go
+e.Use(tracer.EchoMiddleware(tracerName))
+```
+
+## gRPC
+
+包括一元 RPC 调用追踪、流 RPC 调用追踪
+
+接入 tracer 代码：
+
+```go
+s := grpc.NewServer(
+	tracer.RPCServerOption(tracerName), // server tracer
+)
+```
+
+```go
+conn, err = grpc.Dial(addr,
+	tracer.RPCClientOption(tracerName), // client tracer
+)
+```
+
+## Redis
+
+TODO
+
+## MySQL
+
+TODO
+
+## Jaeger
 
 jaeger 安装，参考： [https://www.jaegertracing.io/docs/1.18/getting-started/](https://www.jaegertracing.io/docs/1.18/getting-started/)
 
@@ -51,6 +107,23 @@ docker run -d --name jaeger \
   -p 9411:9411 \
   jaegertracing/all-in-one:1.18
 ```
+
+UI 界面： http://localhost:16686/
+
+## Zipkin
+
+TODO
+
+
+## 集成报警
+
+TODO
+
+
+## 主要用途
+
+- 开发环境，可以一直开着 tracer ，并通过集成报警，实时通知程序服务异常
+- 生产环境，排查错误，需要时，打开 tracer ，协助分析问题
 
 
 ## 参考
