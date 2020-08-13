@@ -24,7 +24,7 @@ func EchoMiddleware(tracerName string) echo.MiddlewareFunc {
 				span := tracer.StartSpan(
 					"HTTP "+r.Method+" "+r.URL.Path,
 					ext.RPCServerOption(spanContext),
-					opentracing.Tag{Key: string(ext.Component), Value: tracerName + " HTTP"},
+					opentracing.Tag{Key: string(ext.Component), Value: "HTTP"},
 				)
 				defer span.Finish()
 

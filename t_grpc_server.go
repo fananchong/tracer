@@ -10,9 +10,14 @@ import (
 	"google.golang.org/grpc/grpclog"
 )
 
-// RPCServerOption
-func RPCServerOption(tracerName string) grpc.ServerOption {
+// RPCUnaryServerInterceptorOption 用来设置 gRPC tracer 拦截器
+func RPCUnaryServerInterceptorOption(tracerName string) grpc.ServerOption {
 	return grpc.UnaryInterceptor(gRPCUnaryServerInterceptor(tracerName))
+}
+
+// RPCStreamServerInterceptorOption 用来设置 gRPC tracer 拦截器
+func RPCStreamServerInterceptorOption(tracerName string) grpc.ServerOption {
+	return grpc.StreamInterceptor(gRPCStreamServerInterceptor(tracerName))
 }
 
 // gRPCUnaryServerInterceptor gRPC 服务器端，一元拦截器
@@ -29,7 +34,7 @@ func gRPCUnaryServerInterceptor(tracerName string) grpc.UnaryServerInterceptor {
 			span := tracer.StartSpan(
 				info.FullMethod,
 				ext.RPCServerOption(spanContext),
-				opentracing.Tag{Key: string(ext.Component), Value: tracerName + " gRPC"},
+				opentracing.Tag{Key: string(ext.Component), Value: "gRPC"},
 				ext.SpanKindRPCServer,
 			)
 			defer span.Finish()
@@ -47,4 +52,57 @@ func gRPCUnaryServerInterceptor(tracerName string) grpc.UnaryServerInterceptor {
 		}
 		return handler(ctx, req)
 	}
+}
+
+// gRPCStreamServerInterceptor
+func gRPCStreamServerInterceptor(tracerName string) grpc.StreamServerInterceptor {
+	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		if tracer := Get(tracerName); tracer != nil {
+			spanContext, err := extractSpanContext(ss.Context(), tracer)
+			if err != nil && err != opentracing.ErrSpanContextNotFound {
+				// 如果 tracer extract 失败，那么跳过追踪
+				grpclog.Errorf("SpanContext Extract Error! %s", err.Error())
+				return handler(srv, ss)
+			}
+
+			span := tracer.StartSpan(
+				info.FullMethod,
+				ext.RPCServerOption(spanContext),
+				opentracing.Tag{Key: string(ext.Component), Value: "gRPC Server"},
+				ext.SpanKindRPCServer,
+			)
+			defer span.Finish()
+
+			err = handler(srv, newWrappedServerStream(opentracing.ContextWithSpan(ss.Context(), span), ss))
+			if err != nil {
+				ext.Error.Set(span, true)
+				span.LogFields(log.String("event", "error"), log.String("message", err.Error()))
+			}
+			return err
+		}
+		return handler(srv, ss)
+	}
+}
+
+// wrappedServerStream wraps around the embedded grpc.ServerStream, and intercepts the RecvMsg and
+// SendMsg method call.
+type wrappedServerStream struct {
+	ctx context.Context
+	grpc.ServerStream
+}
+
+func (w *wrappedServerStream) RecvMsg(m interface{}) error {
+	return w.ServerStream.RecvMsg(m)
+}
+
+func (w *wrappedServerStream) SendMsg(m interface{}) error {
+	return w.ServerStream.SendMsg(m)
+}
+
+func (w *wrappedServerStream) Context() context.Context {
+	return w.ctx
+}
+
+func newWrappedServerStream(ctx context.Context, s grpc.ServerStream) grpc.ServerStream {
+	return &wrappedServerStream{ctx, s}
 }
