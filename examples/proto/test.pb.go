@@ -134,7 +134,7 @@ var file_test_proto_rawDesc = []byte{
 	0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x28, 0x0a, 0x0c,
 	0x45, 0x63, 0x68, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07,
 	0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d,
-	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0x93, 0x02, 0x0a, 0x04, 0x45, 0x63, 0x68, 0x6f, 0x12,
+	0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0x83, 0x03, 0x0a, 0x04, 0x45, 0x63, 0x68, 0x6f, 0x12,
 	0x36, 0x0a, 0x09, 0x55, 0x6e, 0x61, 0x72, 0x79, 0x45, 0x63, 0x68, 0x6f, 0x12, 0x12, 0x2e, 0x70,
 	0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x63, 0x68, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
 	0x1a, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x63, 0x68, 0x6f, 0x52, 0x65, 0x73,
@@ -151,7 +151,14 @@ var file_test_proto_rawDesc = []byte{
 	0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x69, 0x6e, 0x67, 0x45, 0x63, 0x68, 0x6f, 0x12, 0x12, 0x2e,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x63, 0x68, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
 	0x74, 0x1a, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x63, 0x68, 0x6f, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x28, 0x01, 0x30, 0x01, 0x42, 0x09, 0x5a, 0x07,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x28, 0x01, 0x30, 0x01, 0x12, 0x36, 0x0a, 0x09,
+	0x54, 0x65, 0x73, 0x74, 0x52, 0x65, 0x64, 0x69, 0x73, 0x12, 0x12, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x2e, 0x45, 0x63, 0x68, 0x6f, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x63, 0x68, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x22, 0x00, 0x12, 0x36, 0x0a, 0x09, 0x54, 0x65, 0x73, 0x74, 0x4d, 0x79, 0x53, 0x51,
+	0x4c, 0x12, 0x12, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x63, 0x68, 0x6f, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2e, 0x45, 0x63,
+	0x68, 0x6f, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x42, 0x09, 0x5a, 0x07,
 	0x2e, 0x3b, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
@@ -177,12 +184,16 @@ var file_test_proto_depIdxs = []int32{
 	0, // 1: proto.Echo.ServerStreamingEcho:input_type -> proto.EchoRequest
 	0, // 2: proto.Echo.ClientStreamingEcho:input_type -> proto.EchoRequest
 	0, // 3: proto.Echo.BidirectionalStreamingEcho:input_type -> proto.EchoRequest
-	1, // 4: proto.Echo.UnaryEcho:output_type -> proto.EchoResponse
-	1, // 5: proto.Echo.ServerStreamingEcho:output_type -> proto.EchoResponse
-	1, // 6: proto.Echo.ClientStreamingEcho:output_type -> proto.EchoResponse
-	1, // 7: proto.Echo.BidirectionalStreamingEcho:output_type -> proto.EchoResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	0, // 4: proto.Echo.TestRedis:input_type -> proto.EchoRequest
+	0, // 5: proto.Echo.TestMySQL:input_type -> proto.EchoRequest
+	1, // 6: proto.Echo.UnaryEcho:output_type -> proto.EchoResponse
+	1, // 7: proto.Echo.ServerStreamingEcho:output_type -> proto.EchoResponse
+	1, // 8: proto.Echo.ClientStreamingEcho:output_type -> proto.EchoResponse
+	1, // 9: proto.Echo.BidirectionalStreamingEcho:output_type -> proto.EchoResponse
+	1, // 10: proto.Echo.TestRedis:output_type -> proto.EchoResponse
+	1, // 11: proto.Echo.TestMySQL:output_type -> proto.EchoResponse
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -259,6 +270,8 @@ type EchoClient interface {
 	ClientStreamingEcho(ctx context.Context, opts ...grpc.CallOption) (Echo_ClientStreamingEchoClient, error)
 	// BidirectionalStreamingEcho is bidi streaming.
 	BidirectionalStreamingEcho(ctx context.Context, opts ...grpc.CallOption) (Echo_BidirectionalStreamingEchoClient, error)
+	TestRedis(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
+	TestMySQL(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
 }
 
 type echoClient struct {
@@ -375,6 +388,24 @@ func (x *echoBidirectionalStreamingEchoClient) Recv() (*EchoResponse, error) {
 	return m, nil
 }
 
+func (c *echoClient) TestRedis(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error) {
+	out := new(EchoResponse)
+	err := c.cc.Invoke(ctx, "/proto.Echo/TestRedis", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *echoClient) TestMySQL(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error) {
+	out := new(EchoResponse)
+	err := c.cc.Invoke(ctx, "/proto.Echo/TestMySQL", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EchoServer is the server API for Echo service.
 type EchoServer interface {
 	// UnaryEcho is unary echo.
@@ -385,6 +416,8 @@ type EchoServer interface {
 	ClientStreamingEcho(Echo_ClientStreamingEchoServer) error
 	// BidirectionalStreamingEcho is bidi streaming.
 	BidirectionalStreamingEcho(Echo_BidirectionalStreamingEchoServer) error
+	TestRedis(context.Context, *EchoRequest) (*EchoResponse, error)
+	TestMySQL(context.Context, *EchoRequest) (*EchoResponse, error)
 }
 
 // UnimplementedEchoServer can be embedded to have forward compatible implementations.
@@ -402,6 +435,12 @@ func (*UnimplementedEchoServer) ClientStreamingEcho(Echo_ClientStreamingEchoServ
 }
 func (*UnimplementedEchoServer) BidirectionalStreamingEcho(Echo_BidirectionalStreamingEchoServer) error {
 	return status.Errorf(codes.Unimplemented, "method BidirectionalStreamingEcho not implemented")
+}
+func (*UnimplementedEchoServer) TestRedis(context.Context, *EchoRequest) (*EchoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestRedis not implemented")
+}
+func (*UnimplementedEchoServer) TestMySQL(context.Context, *EchoRequest) (*EchoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TestMySQL not implemented")
 }
 
 func RegisterEchoServer(s *grpc.Server, srv EchoServer) {
@@ -499,6 +538,42 @@ func (x *echoBidirectionalStreamingEchoServer) Recv() (*EchoRequest, error) {
 	return m, nil
 }
 
+func _Echo_TestRedis_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EchoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EchoServer).TestRedis(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Echo/TestRedis",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EchoServer).TestRedis(ctx, req.(*EchoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Echo_TestMySQL_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EchoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EchoServer).TestMySQL(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.Echo/TestMySQL",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EchoServer).TestMySQL(ctx, req.(*EchoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Echo_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "proto.Echo",
 	HandlerType: (*EchoServer)(nil),
@@ -506,6 +581,14 @@ var _Echo_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UnaryEcho",
 			Handler:    _Echo_UnaryEcho_Handler,
+		},
+		{
+			MethodName: "TestRedis",
+			Handler:    _Echo_TestRedis_Handler,
+		},
+		{
+			MethodName: "TestMySQL",
+			Handler:    _Echo_TestMySQL_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

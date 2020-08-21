@@ -18,6 +18,8 @@ type server struct {
 
 func (s *server) UnaryEcho(ctx context.Context, in *proto.EchoRequest) (*proto.EchoResponse, error) {
 	fmt.Printf("UnaryEcho called with message %q\n", in.GetMessage())
+	res, err := rpcClient.TestRedis(ctx, in)
+	fmt.Printf("TestRedis call returned %q, %v\n", res.GetMessage(), err)
 	return &proto.EchoResponse{Message: fmt.Sprintf("%s %d", in.Message, rand.Int())}, nil
 }
 
@@ -73,6 +75,8 @@ func (s *server) BidirectionalStreamingEcho(stream proto.Echo_BidirectionalStrea
 
 const tracerName = "test"
 
+var rpcClient proto.EchoClient
+
 func main() {
 
 	// Init tracer
@@ -80,7 +84,15 @@ func main() {
 		panic(err)
 	}
 
-	// Init gRPC
+	// Init gRPC client
+	var err error
+	var conn *grpc.ClientConn
+	if conn, rpcClient, err = newRPCClient("127.0.0.1:9999"); err != nil {
+		panic(err)
+	}
+	defer conn.Close()
+
+	// Init gRPC server
 	lis, err := net.Listen("tcp", fmt.Sprintf(":8888"))
 	if err != nil {
 		panic(fmt.Errorf("failed to listen: %v", err))
@@ -92,4 +104,19 @@ func main() {
 	)
 	proto.RegisterEchoServer(s, &server{})
 	s.Serve(lis)
+}
+
+func newRPCClient(addr string) (conn *grpc.ClientConn, client proto.EchoClient, err error) {
+	conn, err = grpc.Dial(addr,
+		grpc.WithInsecure(),
+		grpc.WithBlock(),
+		tracer.RPCUnaryClientInterceptorOption(tracerName),  // client tracer
+		tracer.RPCStreamClientInterceptorOption(tracerName), // client tracer
+	)
+	if err == nil {
+		client = proto.NewEchoClient(conn)
+	} else {
+		fmt.Printf("did not connect: %v", err)
+	}
+	return
 }

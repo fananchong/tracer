@@ -22,4 +22,7 @@ service Echo {
     rpc ClientStreamingEcho(stream EchoRequest) returns (EchoResponse) {}
     // BidirectionalStreamingEcho is bidi streaming.
     rpc BidirectionalStreamingEcho(stream EchoRequest) returns (stream EchoResponse) {}
+
+    rpc TestRedis(EchoRequest) returns (EchoResponse) {}
+    rpc TestMySQL(EchoRequest) returns (EchoResponse) {}
 }

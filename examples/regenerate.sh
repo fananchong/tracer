@@ -16,4 +16,6 @@ rm -rf ${WORKDIR}/bin/bin/ ${WORKDIR}/bin/include ${WORKDIR}/bin/protoc-3.12.4-l
 
 protoc --go_out=plugins=grpc:./proto -I./proto test.proto
 
+go mod tidy
+
 echo "done"
