@@ -20,7 +20,7 @@ import (
 var err error
 var echoClient proto.EchoClient
 
-const tracerName = "test"
+const tracerName = "server1"
 
 func main() {
 

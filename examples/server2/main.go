@@ -20,6 +20,8 @@ func (s *server) UnaryEcho(ctx context.Context, in *proto.EchoRequest) (*proto.E
 	fmt.Printf("UnaryEcho called with message %q\n", in.GetMessage())
 	res, err := rpcClient.TestRedis(ctx, in)
 	fmt.Printf("TestRedis call returned %q, %v\n", res.GetMessage(), err)
+	res, err = rpcClient.TestMySQL(ctx, in)
+	fmt.Printf("TestMySQL call returned %q, %v\n", res.GetMessage(), err)
 	return &proto.EchoResponse{Message: fmt.Sprintf("%s %d", in.Message, rand.Int())}, nil
 }
 
@@ -73,7 +75,7 @@ func (s *server) BidirectionalStreamingEcho(stream proto.Echo_BidirectionalStrea
 	}
 }
 
-const tracerName = "test"
+const tracerName = "server2"
 
 var rpcClient proto.EchoClient
 

@@ -22,14 +22,19 @@ func (s *server) TestRedis(ctx context.Context, in *proto.EchoRequest) (*proto.E
 	rclient := tracer.NewRedisClient(ctx, tracerName, rdb)
 	rclient.Set("data", "TestRedis", 60*time.Second)
 	data := rclient.Get("data").String()
-	return &proto.EchoResponse{Message: fmt.Sprintf("%s %d", data, rand.Int())}, nil
+	resq := fmt.Sprintf("%s %d", data, rand.Int())
+	fmt.Printf("resq %s\n", resq)
+	return &proto.EchoResponse{Message: resq}, nil
 }
 
 func (s *server) TestMySQL(ctx context.Context, in *proto.EchoRequest) (*proto.EchoResponse, error) {
-	return nil, fmt.Errorf("Not implemented")
+	tracer.MySQLPingWrap(ctx, tracerName)
+	resq := fmt.Sprintf("MySQL %d", rand.Int())
+	fmt.Printf("resq %s\n", resq)
+	return &proto.EchoResponse{Message: resq}, nil
 }
 
-const tracerName = "test"
+const tracerName = "server3"
 
 var rdb *redis.Client
 
