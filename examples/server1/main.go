@@ -55,7 +55,7 @@ func main() {
 }
 
 func test1(c echo.Context) error {
-	ctx, cancel := context.WithTimeout(c.Request().Context(), 10*time.Second) // tracer context
+	ctx, cancel := context.WithTimeout(c.Request().Context(), 30*time.Second) // tracer context
 	defer cancel()
 	res, err := echoClient.UnaryEcho(ctx, &proto.EchoRequest{Message: "hello, Unary"})
 	fmt.Printf("UnaryEcho call returned %q, %v\n", res.GetMessage(), err)
