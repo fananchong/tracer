@@ -21,6 +21,9 @@ func (s *server) TestRedis(ctx context.Context, in *proto.EchoRequest) (*proto.E
 	fmt.Printf("TestRedis called with message %q\n", in.GetMessage())
 	rclient := tracer.NewRedisClient(ctx, tracerName, rdb)
 	rclient.Set("data", "TestRedis", 60*time.Second)
+	rclient.Set("data2", "TestRedis2", 60*time.Second)
+	rclient.Set("data3", "TestRedis3", 60*time.Second)
+	rclient.Set("data4", "TestRedis4", 60*time.Second)
 	data := rclient.Get("data").String()
 	resq := fmt.Sprintf("%s %d", data, rand.Int())
 	fmt.Printf("resq %s\n", resq)
@@ -47,8 +50,9 @@ func main() {
 
 	// Init Redis
 	rdb = redis.NewClient(&redis.Options{
-		Addr: "127.0.0.1:6379",
-		DB:   0,
+		Addr:     "127.0.0.1:6379",
+		DB:       0,
+		Password: "123456",
 	})
 	defer rdb.Close()
 

@@ -15,27 +15,27 @@ import (
 type RedisClient struct {
 	*redis.Client
 	tracerName string
+	ctx        context.Context
 }
 
 // NewRedisClient RedisClient 构造函数
 func NewRedisClient(ctx context.Context, tracerName string, redis *redis.Client) *RedisClient {
 	rclient := &RedisClient{
-		Client:     redis,
 		tracerName: tracerName,
 	}
-	rclient.Client.WithContext(ctx)
-	rclient.Client.WrapProcess(rclient.process(ctx))
-	rclient.Client.WrapProcessPipeline(rclient.processPipeline(ctx))
+	rclient.Client = redis.WithContext(ctx)
+	rclient.Client.WrapProcess(rclient.process())
 	return rclient
 }
 
-func (rclient *RedisClient) process(ctx context.Context) func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
+func (rclient *RedisClient) process() func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 	return func(oldProcess func(cmd redis.Cmder) error) func(cmd redis.Cmder) error {
 		return func(cmd redis.Cmder) error {
+
 			if tracer := Get(rclient.tracerName); tracer != nil {
 
 				var parentCtx opentracing.SpanContext
-				if parent := opentracing.SpanFromContext(ctx); parent != nil {
+				if parent := opentracing.SpanFromContext(rclient.Client.Context()); parent != nil {
 					parentCtx = parent.Context()
 				}
 
@@ -56,35 +56,6 @@ func (rclient *RedisClient) process(ctx context.Context) func(oldProcess func(cm
 				return err
 			}
 			return oldProcess(cmd)
-		}
-	}
-}
-
-func (rclient *RedisClient) processPipeline(ctx context.Context) func(oldProcess func(cmds []redis.Cmder) error) func(cmds []redis.Cmder) error {
-	return func(oldProcess func(cmds []redis.Cmder) error) func(cmds []redis.Cmder) error {
-		return func(cmds []redis.Cmder) error {
-			if tracer := Get(rclient.tracerName); tracer != nil {
-				pipelineSpan, ctx := opentracing.StartSpanFromContext(ctx, "(pipeline)")
-
-				ext.DBType.Set(pipelineSpan, "redis")
-
-				for i := len(cmds); i > 0; i-- {
-					cmdName := strings.ToUpper(cmds[i-1].Name())
-					if cmdName == "" {
-						cmdName = "(empty command)"
-					}
-
-					span, _ := opentracing.StartSpanFromContext(ctx, cmdName)
-					ext.DBType.Set(span, "redis")
-					ext.DBStatement.Set(span, fmt.Sprintf("%v", cmds[i-1].Args()))
-					defer span.Finish()
-				}
-
-				defer pipelineSpan.Finish()
-
-				return oldProcess(cmds)
-			}
-			return oldProcess(cmds)
 		}
 	}
 }

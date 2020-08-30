@@ -42,7 +42,7 @@ func MySQLPingWrap(ctx context.Context, tracerName string) {
 
 func ping() (err error) {
 	var db *sql.DB
-	db, err = sql.Open("mysql", "fan:123456@tcp(172.26.150.124:3306)/test")
+	db, err = sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/mysql")
 	if err != nil {
 		return
 	}
