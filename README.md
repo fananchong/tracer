@@ -35,7 +35,7 @@
 - 正常情况
   ```
   server1 --> HTTP --> server2
-                          |--> HTTP --> server1
+                          |--> HTTP --> server1 （略，要封装下 http client api 调用即可。封装方法见对 MySQL 的封装）
                           |-->  gRPC --> server3
                                             |--> MySQL
                                             |--> Redis
@@ -82,11 +82,21 @@ conn, err = grpc.Dial(addr,
 
 ## Redis
 
-TODO
+```go
+var rdb *redis.Client
+func f() {
+	rclient := tracer.NewRedisClient(ctx, tracerName, rdb)
+	rclient.Set("data", "TestRedis", 60*time.Second)
+}
+```
+
+Redis Client 产品有不少，实际情况，根据自己使用的 Redis 库做下封装即可
 
 ## MySQL
 
-TODO
+MySQL Client 产品有不少，实际情况，根据自己使用的 MySQL 库做下封装即可
+
+这里也懒的封装某个 MySQL 库了，实践了下， span 一段逻辑的例子（连接 MySQL，并 Ping MySQL）
 
 ## Jaeger
 
