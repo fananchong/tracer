@@ -159,4 +159,5 @@ prometheus 的相关练习参考： [https://github.com/fananchong/test/tree/mas
 
 ## 参考
 
+- [https://github.com/jaegertracing/jaeger/tree/master/examples/hotrod](https://github.com/jaegertracing/jaeger/tree/master/examples/hotrod)
 - [https://github.com/opentracing-contrib](https://github.com/opentracing-contrib)
